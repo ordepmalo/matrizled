@@ -1,29 +1,29 @@
 -------------------------------------------------------------------------------
--- Title      : Multiplex with 32 input and 1 output
--- Project    : Integrating Project II
+-- Title         : Multiplexer
+-- Project       : 
 -------------------------------------------------------------------------------
--- File       : multiplex_32_in_1_out.vhd
--- Author     : Pedro Messias José da Cunha Bastos
--- Company    : 
--- Created    : 2015-04-16
--- Last update: 2015-04-16
--- Platform   : 
--- Standard   : VHDL'93/02
+-- File          : mux_32_1.vhd
+-- Author        : Pedro Messias Jose da Cunha Bastos
+-- Company       : 
+-- Created       : 2015-04-17
+-- Last update   : 2015-04-17
+-- Target Device : 
+-- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
--- Description: Multiplex implementation
+-- Description   : Multiplexer implementation
 -------------------------------------------------------------------------------
 -- Copyright (c) 2015 
 -------------------------------------------------------------------------------
--- Revisions  :
+-- Revisions     :
 -- Date        Version  Author  Description
--- 2015-04-16  1.0      pedro	Created
+-- 2015-04-17  1.0      Ordep   Created
 -------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 
 entity multiplex_32_in_1_out is
-  
+
   port (
     data_32_i : in  std_logic_vector(31 downto 0);
     sel_i     : in  std_logic_vector(4 downto 0);
@@ -39,9 +39,9 @@ begin
   process(data_32_i, sel_i)
 
   begin
-    
+
     case sel_i is
-      
+
       when "00000" => out_o <= data_32_i(0);
       when "00001" => out_o <= data_32_i(1);
       when "00010" => out_o <= data_32_i(2);
@@ -74,9 +74,9 @@ begin
       when "11101" => out_o <= data_32_i(29);
       when "11110" => out_o <= data_32_i(30);
       when "11111" => out_o <= data_32_i(31);
-                      
+
     end case;
-    
+
   end process;
-  
+
 end multiplex_32_in_1_out_rtl;
