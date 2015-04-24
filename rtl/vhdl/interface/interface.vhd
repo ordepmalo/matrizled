@@ -43,7 +43,7 @@ end interface;
 
 architecture interface_rtl of interface is
 
-  type INTERFACE_ST_TYPE is (ST_INIT, ST_INCR, ST_VERIFY);
+  type INTERFACE_ST_TYPE is (ST_INIT, ST_SET_CLK, ST_INCR, ST_VERIFY);
   attribute syn_enconding                      : string;
   attribute syn_enconding of INTERFACE_ST_TYPE : type is "safe";  -- FSM para n
 
@@ -51,10 +51,13 @@ architecture interface_rtl of interface is
   signal state_next : INTERFACE_ST_TYPE;
   signal count_reg  : unsigned(MAX_VALUE_BITS - 1 downto 0);
   signal count_next : unsigned(MAX_VALUE_BITS - 1 downto 0);
+  signal clk_reg    : std_logic;
+  signal clk_next   : std_logic;
 
 begin
 
   ctrl_o <= std_logic_vector(count_reg);
+  clk    <= clk_reg;
 
   process(sysclk, reset_n)
 
@@ -63,37 +66,50 @@ begin
     if reset_n = '0' then
       state_reg <= ST_INIT;
       count_reg <= (others => '0');
+      clk_reg   <= '0';
     elsif rising_edge(sysclk) then  -- sysclk = 50.000.000 (frequency of FPGA on DE2 module)
       state_reg <= state_next;
       count_reg <= count_next;
+      clk_reg   <= clk_next;
     end if;
 
   end process;
 
-  process(count_reg, en_i, state_reg)
+  process(clk_reg, count_reg, en_i, state_reg)
 
   begin
 
     state_next <= state_reg;
     count_next <= count_reg;
+    clk_next   <= clk_reg;
 
     case state_reg is
 
       when ST_INIT =>
-        state_next <= ST_INCR;
+        state_next <= ST_SET_CLK;
         count_next <= (others => '0');  -- zerar o contador
+        clk_next   <= '0';
+
+      when ST_SET_CLK =>
+        if en_i = '1' then
+          clk_next   <= '1';
+          state_next <= ST_INCR;
+        end if;
+
 
       when ST_INCR =>
         if en_i = '1' then
           count_next <= count_reg + 1;
           state_next <= ST_VERIFY;
+          clk_next   <= '0';
         end if;
 
+
       when ST_VERIFY =>
-        if count_reg >= MAX_VALUE then
+        if count_reg = MAX_VALUE - 1 then
           state_next <= ST_INIT;
         else
-          state_next <= ST_INCR;
+          state_next <= ST_SET_CLK;
         end if;
 
     end case;

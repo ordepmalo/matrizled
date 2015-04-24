@@ -77,6 +77,7 @@ begin  -- architecture interface_tb_rtl
 
     wait for 100 US;
     loop
+      wait until sysclk = '1';
       en_i <= '1';
       wait for 10 NS;
       en_i <= '0';
