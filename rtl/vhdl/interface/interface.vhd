@@ -6,7 +6,7 @@
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-17
--- Last update   : 2015-04-22
+-- Last update   : 2015-04-24
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -31,10 +31,10 @@ entity interface is
     );
 
   port (
-    sysclk  : in  std_logic;
-    reset_n : in  std_logic;
-    en_i    : in  std_logic;
-    ctrl_o  : in  std_logic;
+    sysclk  : in  std_logic;            -- clock global module DE2
+    reset_n : in  std_logic;            -- reset global
+    en_i    : in  std_logic;            -- signal do clk_divider
+    ctrl_o  : in  std_logic_vector(31 downto 0);  -- signal que vai para o sel_i
     stb_o   : out std_logic;
     clk     : out std_logic
     );
@@ -52,6 +52,8 @@ architecture interface_rtl of interface is
 
 begin
 
+  ctrl_o <= count_reg;
+
   process(sysclk, reset_n)
 
   begin
@@ -60,42 +62,42 @@ begin
       state_reg <= ST_INIT;
       count_reg <= (others => '0');
     elsif rising_edge(sysclk) then  -- sysclk = 50.000.000 (frequency of FPGA on DE2 module)
-    else
+      state_reg <= state_next;
+      count_reg <= count_next;
     end if;
 
-    state_reg <= state_next;
-    count_reg <= count_next;
 
-  end if;
+  end process;
 
-end process;
+  process(state_reg, count_reg)
 
-process(state_reg, count_reg)
+  begin
 
-begin
+    state_next <= state_reg;
+    count_next <= count_reg;
 
-  state_next <= state_reg;
-  count_next <= count_reg;
+    case state_reg is
 
-  case state_reg is
+      when ST_INIT =>
+        state_next <= ST_INCR;
 
-    when ST_INIT =>
-      state_next <= ST_INIT;
+      when ST_INCR =>
+        if en_i = '1' then
+          count_next <= count_reg + 1;
+        else
+          state_next <= ST_INIT;
+        end if;
+        state_next <= ST_VERIFY;
 
-    when ST_INCR =>
-      if en_i = '1' then
-        count_next <= count_reg + 1;
-      end if;
-      state_next <= ST_VERIFY;
+      when ST_VERIFY =>
+        if count_reg >= MAX_VALUE then
+          state_next <= ST_INIT;
+          
+        else state_next <= ST_INCR;
+        end if;
 
-    when ST_VERIFY =>
-      if count_reg >= MAX_VALUE then
-        state_next <= ST_INIT;
-      else state_next <= ST_INCR;
-      end if;
+    end case;
 
-  end case;
-
-end process;
+  end process;
 
 end interface_rtl;
