@@ -6,7 +6,7 @@
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-23
--- Last update   : 2015-04-23
+-- Last update   : 2015-04-24
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ architecture interface_tb_rtl of interface_tb is
   signal sysclk  : std_logic := '0';
   signal reset_n : std_logic := '0';
   signal en_i    : std_logic := '0';
-  signal ctrl_o  : std_logic := '0';
+  signal ctrl_o  : std_logic_vector(MAX_VALUE_BITS - 1 downto 0);
   signal stb_o   : std_logic;
   signal clk     : std_logic;
 
@@ -76,18 +76,12 @@ begin  -- architecture interface_tb_rtl
   begin
 
     wait for 100 US;
-    en_i  <= '1';
-    wait for 100 US;
-    en_i <= '0';
-    wait for 100 US;
-    en_i  <= '1';
-    wait for 100 US;
-    en_i <= '0';
-    wait for 100 US;
-    en_i  <= '1';
-    wait for 100 US;
-    en_i <= '0';
-
+    loop
+      en_i <= '1';
+      wait for 10 NS;
+      en_i <= '0';
+      wait for 100 US;
+    end loop;
 
     -- Add stimulus here
 

@@ -34,7 +34,7 @@ entity interface is
     sysclk  : in  std_logic;            -- clock global module DE2
     reset_n : in  std_logic;            -- reset global
     en_i    : in  std_logic;            -- signal do clk_divider
-    ctrl_o  : in  std_logic_vector(31 downto 0);  -- signal que vai para o sel_i
+    ctrl_o  : out std_logic_vector(MAX_VALUE_BITS - 1 downto 0);  -- signal que vai para o sel_i
     stb_o   : out std_logic;
     clk     : out std_logic
     );
@@ -44,6 +44,8 @@ end interface;
 architecture interface_rtl of interface is
 
   type INTERFACE_ST_TYPE is (ST_INIT, ST_INCR, ST_VERIFY);
+  attribute syn_enconding                      : string;
+  attribute syn_enconding of INTERFACE_ST_TYPE : type is "safe";  -- FSM para n
 
   signal state_reg  : INTERFACE_ST_TYPE;
   signal state_next : INTERFACE_ST_TYPE;
@@ -52,7 +54,7 @@ architecture interface_rtl of interface is
 
 begin
 
-  ctrl_o <= count_reg;
+  ctrl_o <= std_logic_vector(count_reg);
 
   process(sysclk, reset_n)
 
@@ -66,10 +68,9 @@ begin
       count_reg <= count_next;
     end if;
 
-
   end process;
 
-  process(state_reg, count_reg)
+  process(count_reg, en_i, state_reg)
 
   begin
 
@@ -80,20 +81,19 @@ begin
 
       when ST_INIT =>
         state_next <= ST_INCR;
+        count_next <= (others => '0');  -- zerar o contador
 
       when ST_INCR =>
         if en_i = '1' then
           count_next <= count_reg + 1;
-        else
-          state_next <= ST_INIT;
+          state_next <= ST_VERIFY;
         end if;
-        state_next <= ST_VERIFY;
 
       when ST_VERIFY =>
         if count_reg >= MAX_VALUE then
           state_next <= ST_INIT;
-          
-        else state_next <= ST_INCR;
+        else
+          state_next <= ST_INCR;
         end if;
 
     end case;
