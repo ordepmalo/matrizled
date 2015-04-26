@@ -2,11 +2,11 @@
 -- Title         : Multiplexer
 -- Project       : 
 -------------------------------------------------------------------------------
--- File          : mux_32_1.vhd
+-- File          : multiplexer.vhd
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-17
--- Last update   : 2015-04-21
+-- Last update   : 2015-04-25
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -23,17 +23,23 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity multiplex_32_in_1_out is
+library work;
+use work.functions_pkg.all;
+
+entity multiplexer is
+  generic (
+    N_INPUTS : natural := 32
+    );
 
   port (
-    data_32_i : in  std_logic_vector(31 downto 0);
-    sel_i     : in  std_logic_vector(4 downto 0);
+    data_32_i : in  std_logic_vector(N_INPUTS - 1 downto 0);
+    sel_i     : in  std_logic_vector(log2ceil(N_INPUTS) - 1 downto 0);
     out_o     : out std_logic
     );
 
-end multiplex_32_in_1_out;
+end multiplexer;
 
-architecture multiplex_32_in_1_out_rtl of multiplex_32_in_1_out is
+architecture multiplexer_rtl of multiplexer is
 
 begin
 
@@ -45,4 +51,25 @@ begin
 
   end process;
 
-end multiplex_32_in_1_out_rtl;
+end multiplexer_rtl;
+
+
+  -- Stimulus generation
+  stimulus_proc : process
+    variable counter : unsigned(log2ceil(N_INPUTS) - 1 downto 0) := (others => '0');
+  begin
+    -- Add stimulus here
+    
+
+    wait for 100 US;
+    loop 
+      sel_i <= std_logic_vector(counter);
+      wait for 1 US;
+      if counter = N_INPUTS - 1 then
+        wait;
+      end if;
+      counter := counter + 1;
+    end loop;
+    
+    wait;
+  end process stimulus_proc;
