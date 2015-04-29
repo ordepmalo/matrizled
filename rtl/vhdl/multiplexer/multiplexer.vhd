@@ -52,24 +52,3 @@ begin
   end process;
 
 end multiplexer_rtl;
-
-
-  -- Stimulus generation
-  stimulus_proc : process
-    variable counter : unsigned(log2ceil(N_INPUTS) - 1 downto 0) := (others => '0');
-  begin
-    -- Add stimulus here
-    
-
-    wait for 100 US;
-    loop 
-      sel_i <= std_logic_vector(counter);
-      wait for 1 US;
-      if counter = N_INPUTS - 1 then
-        wait;
-      end if;
-      counter := counter + 1;
-    end loop;
-    
-    wait;
-  end process stimulus_proc;
