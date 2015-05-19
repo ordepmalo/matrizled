@@ -26,21 +26,53 @@ use ieee.numeric_std.all;
 entity edit_msg is
 
   port (
-    sysclk  : in std_logic;             -- global clock
-    reset_n : in std_logic);            -- global reset
+    sysclk  : in std_logic;                    -- global clock
+    reset_n : in std_logic);                   -- global reset
+  data_o : out std_logic_vector (31 downto 0)  --
+    );
 
 end entity edit_msg;
 
-type MSG_ST_TYPE is ();
-type msg is natural range 0 to 7 of std_logic_vector(31 downto 0);
-
 architecture edit_msg_rtl of edit_msg is
+
+  type MSG_ST_TYPE is (ST_INIT);
+  type msg is natural range 0 to 7 of std_logic_vector(31 downto 0);
+
+  signal state_reg  : MSG_ST_TYPE;
+  signal state_next : MSG_ST_TYPE;
 
 begin  -- architecture edit_msg_rtl
 
+  process(reset_n, sysclk)
+
+  begin
+
+    if reset_n = '0' then
+      state_reg <= ST_INIT;
+
+    elsif rising_edge(sysclk) then
+      state_reg <= state_next;
+
+    end if;
+
+  end process;
 
 
-end architecture edit_msg_rtl;
+  process (state_reg)
+
+  begin
+
+    state_next <= state_reg;
+
+    case state_reg is
+
+      when ST_INIT =>
+
+    end process;
+
+
+
+  end architecture edit_msg_rtl;
 
 
 
