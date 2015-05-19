@@ -6,7 +6,7 @@
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-20
--- Last update   : 2015-04-21
+-- Last update   : 2015-05-06
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -22,6 +22,9 @@
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
+
+--library work;
+--use work.function_pkg.all;
 
 entity clk_divider is
 

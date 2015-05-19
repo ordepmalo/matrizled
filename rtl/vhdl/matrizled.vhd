@@ -28,7 +28,7 @@ entity matrizled is
   port (
     sysclk   : in  std_logic;
     reset_n  : in  std_logic;
-    data_i   : in  std_logic_vector(31 downto 0);
+    data_i   : in  std_logic_vector(17 downto 0);
     serial_o : out std_logic;
     clk_o    : out std_logic;
     stb_o    : out std_logic);
@@ -45,7 +45,7 @@ begin  -- architecture matrizled_rtl
 
   multiplexer_inst1 : entity work.multiplexer
     generic map (
-      N_INPUTS => 32)
+      N_INPUTS => 18)
     port map (
       data_32_i => data_i,
       sel_i     => sel_int,
@@ -61,7 +61,7 @@ begin  -- architecture matrizled_rtl
 
   interface_inst1 : entity work.interface
     generic map (
-      MAX_VALUE      => 32,
+      MAX_VALUE      => 18,
       MAX_VALUE_BITS => 5)
     port map (
       sysclk  => sysclk,

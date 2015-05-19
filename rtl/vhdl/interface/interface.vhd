@@ -6,7 +6,7 @@
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-17
--- Last update   : 2015-04-28
+-- Last update   : 2015-05-06
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -22,6 +22,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+
+library work;
+use work.functions_pkg.all;
 
 entity interface is
 
