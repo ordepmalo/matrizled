@@ -6,7 +6,7 @@
 -- Author        : Pedro Messias Jose da Cunha Bastos
 -- Company       : 
 -- Created       : 2015-04-17
--- Last update   : 2015-05-19
+-- Last update   : 2015-05-20
 -- Target Device : 
 -- Standard      : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ begin  -- architecture edit_msg_rtl
 
     end case;
 
-    msg_buffer_next(0) <= x"01111111";
+    msg_buffer_next(0) <= x"10000001";
     msg_buffer_next(1) <= x"02222222";
     msg_buffer_next(2) <= x"04333333";
     msg_buffer_next(3) <= x"08444444";
